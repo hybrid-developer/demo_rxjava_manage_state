@@ -59,7 +59,7 @@ class MainPresenterTest {
     @Test
     fun wheneverFetchSuccessWithoutDataShouldResultSuccessWithoutData() {
         // Given
-        val data = DataModel("")
+        val data = DataModel(null)
         val observable = Observable.just(data)
 
         // When

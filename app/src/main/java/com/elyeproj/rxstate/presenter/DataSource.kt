@@ -27,11 +27,11 @@ class DataSource {
         })
     }
 
-    private fun loadData(): DataModel {
+    private fun loadData(): DataModel? {
         Thread.sleep(2500)
         return when (fetchStyle) {
             FetchStyle.FETCH_SUCCESS -> DataModel("Data Loaded")
-            FetchStyle.FETCH_EMPTY -> DataModel("")
+            FetchStyle.FETCH_EMPTY -> DataModel(null)
             FetchStyle.FETCH_ERROR -> throw IllegalStateException("Error Fetching")
         }
     }

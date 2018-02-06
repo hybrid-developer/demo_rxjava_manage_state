@@ -1,6 +1,7 @@
 package com.elyeproj.rxstate.presenter
 
 import com.elyeproj.rxstate.model.UiStateModel
+import com.elyeproj.rxstate.model.UiStateModel.*
 import com.elyeproj.rxstate.presenter.DataSource.FetchStyle.*
 import com.elyeproj.rxstate.view.MainView
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,18 +32,20 @@ class MainPresenter(val view: MainView, val dataSource: DataSource) {
         disposable?.dispose()
 
         disposable = dataSource.fetchData()
-                .map { result -> UiStateModel.success(result) }
-                .onErrorReturn { exception -> UiStateModel.error(exception) }
-                .startWith(UiStateModel.loading())
+                .map { result -> UiStateModel.from(result) }
+                .onErrorReturn { exception -> Error(exception as Exception) }
+                .startWith(Loading())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     uiState ->
-                    when {
-                        uiState.isLoading() -> view.isLoading()
-                        uiState.isError() -> view.isError(uiState.getErrorMessage())
-                        uiState.isSuccess() -> view.isSuccess(uiState.getData())
-                        uiState.isEmpty() -> view.isEmpty()
+                    when(uiState) {
+                        is Loading -> view.isLoading()
+                        is Error -> view.isError(uiState.exception.localizedMessage)
+                        is Success -> when {
+                            uiState.result.dataString != null -> view.isSuccess(uiState.result)
+                            else -> view.isEmpty()
+                        }
                         else -> IllegalArgumentException("Invalid Response")
                     }
                 })

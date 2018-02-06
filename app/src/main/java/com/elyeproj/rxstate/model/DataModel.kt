@@ -1,3 +1,3 @@
 package com.elyeproj.rxstate.model
 
-data class DataModel(val dataString: String)
+open class DataModel(val dataString: String?)

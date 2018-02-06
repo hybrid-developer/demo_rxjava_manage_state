@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     override fun isSuccess(data: DataModel) {
-        status_view.isSuccess(data.dataString)
+        data.dataString?.let { status_view.isSuccess(it) }
     }
 
     override fun isError(errorMessage: String) {
