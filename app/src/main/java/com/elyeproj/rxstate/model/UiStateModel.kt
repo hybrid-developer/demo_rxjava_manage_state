@@ -14,9 +14,6 @@ sealed class UiStateModel {
     }
 
     data class Loading(val loadingMessage: String = "Loading...") : UiStateModel()
-    data class Error(val exception: Exception) : UiStateModel()
+    data class Error(val exception: Throwable) : UiStateModel()
     data class Success(val result: DataModel) : UiStateModel()
 }
-
-
-
