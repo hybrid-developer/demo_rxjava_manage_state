@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.elyeproj.rxstate.R
-import com.elyeproj.rxstate.R.id.status_view
 import com.elyeproj.rxstate.model.MainViewModel
 import com.elyeproj.rxstate.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -46,17 +45,27 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun isEmpty() {
         status_view.isEmpty()
+        enableButtons()
     }
 
     override fun isLoading() {
         status_view.isLoading()
+        enableButtons()
     }
 
     override fun isSuccess(data: String) {
         status_view.isSuccess(data)
+        enableButtons()
     }
 
     override fun isError(errorMessage: String) {
         status_view.isError(errorMessage)
+        enableButtons()
+    }
+
+    private fun enableButtons() {
+        btn_load_error.isEnabled = !btn_load_error.isEnabled
+        btn_load_success.isEnabled = !btn_load_success.isEnabled
+        btn_load_empty.isEnabled = !btn_load_empty.isEnabled
     }
 }
