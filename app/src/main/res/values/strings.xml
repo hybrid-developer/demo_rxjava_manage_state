@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Rx State</string>
+    <string name="app_name">Kotlin Coroutines State</string>
     <string name="status_done">Done</string>
     <string name="status_loading">Loading...</string>
     <string name="btn_txt_empty">Load\nEmpty</string>
