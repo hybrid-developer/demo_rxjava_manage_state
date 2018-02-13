@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.elyeproj.rxstate.R
+import com.elyeproj.rxstate.R.id.status_view
 import com.elyeproj.rxstate.model.MainViewModel
 import com.elyeproj.rxstate.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onDestroy() {
         super.onDestroy()
         Log.d("View", "onDestroy()")
-        mainPresenter.subscription.close()
+        mainPresenter.unSubscribe()
     }
 
     override fun isEmpty() {

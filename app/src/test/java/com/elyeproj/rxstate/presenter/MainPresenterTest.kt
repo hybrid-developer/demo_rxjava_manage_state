@@ -3,14 +3,13 @@ package com.elyeproj.rxstate.presenter
 
 
 import com.elyeproj.rxstate.model.DataModel
+import com.elyeproj.rxstate.model.MainViewModel
 import com.elyeproj.rxstate.model.UiStateModel
 import com.elyeproj.rxstate.view.MainView
-import io.reactivex.Observable
+import kotlinx.coroutines.experimental.runBlocking
 import org.junit.Before
-import org.junit.ClassRule
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 import org.mockito.Mockito.`when` as whenever
@@ -18,19 +17,12 @@ import org.mockito.Mockito.`when` as whenever
 class MainPresenterTest {
 
     @Mock
-    lateinit var view: MainView
+    private lateinit var view: MainView
 
-    lateinit var presenter: MainPresenter
+    @Mock
+    private lateinit var model: MainViewModel
 
-    companion object {
-        @ClassRule @JvmField
-        val schedulers = RxImmediateSchedulerRule()
-    }
-
-    fun <T> any(): T {
-        Mockito.any<T>()
-        return null as T
-    }
+    private lateinit var presenter: MainPresenter
 
     @Before
     fun setUp() {
@@ -39,27 +31,28 @@ class MainPresenterTest {
     }
 
     @Test
-    fun `When uistate is loading, view should show loading message`() {
+    fun `When uistate is loading, view should show loading message`() = runBlocking {
         // Given
-        val uistate = UiStateModel.from(UiStateModel.Loading())
+        UiStateModel.from(UiStateModel.Loading())
 
         // When
-        presenter.loadView(uistate)
+        presenter.subscribe(model)
 
         // Then
+        verify(model).connect()
         verify(view, times(1)).isLoading()
         verify(view, never()).isSuccess(any())
         verify(view, never()).isEmpty()
         verify(view, never()).isError(any())    }
 
     @Test
-    fun `When data was loaded succesful, view should show success`() {
+    fun `When data was loaded succesful, view should show success`() = runBlocking {
         // Given
-        val data = DataModel("Data Loaded")
+        val data = DataModel.Ok("Data Loaded")
         val uistate = UiStateModel.from(data)
 
         // When
-        presenter.loadView(uistate)
+        presenter.subscribe(model)
 
         // Then
         verify(view, never()).isLoading()
@@ -69,13 +62,13 @@ class MainPresenterTest {
     }
 
     @Test
-    fun `When no data was returned, view should show empty message`() {
+    fun `When no data was returned, view should show empty message`() = runBlocking {
         // Given
-        val data = DataModel(null)
+        val data = DataModel.Ok(null)
         val uistate = UiStateModel.from(data)
 
         // When
-        presenter.loadView(uistate)
+        presenter.subscribe(model)
 
         // Then
         verify(view, never()).isLoading()
@@ -85,14 +78,13 @@ class MainPresenterTest {
     }
 
     @Test
-    fun `When an error happened while loading, view should show error`() {
+    fun `When an error happened while loading, view should show error`() = runBlocking {
         // Given
-        val throwable = IllegalArgumentException("Invalid Response")
-
+        val throwable = DataModel.Exception(IllegalArgumentException("Invalid Response"))
         val uistate = UiStateModel.from(throwable)
 
         // When
-        presenter.loadView(uistate)
+        presenter.subscribe(model)
 
         // Then
         verify(view, never()).isLoading()
