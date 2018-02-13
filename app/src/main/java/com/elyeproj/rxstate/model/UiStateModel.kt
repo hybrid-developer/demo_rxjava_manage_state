@@ -6,8 +6,8 @@ sealed class UiStateModel {
         fun <T> from(result: T) : UiStateModel {
             when (result) {
                 is Loading -> return Loading()
-                is DataModel -> return Success(result)
-                is Exception -> return Error(result)
+                is DataModel.Ok<*> -> return Success(result.value)
+                is DataModel.Exception -> return Error(result.exception)
             }
             return Error(IllegalArgumentException("Invalid Response"))
         }
@@ -15,5 +15,5 @@ sealed class UiStateModel {
 
     data class Loading(val loadingMessage: String = "Loading...") : UiStateModel()
     data class Error(val exception: Throwable) : UiStateModel()
-    data class Success(val result: DataModel) : UiStateModel()
+    data class Success(val result: String?) : UiStateModel()
 }

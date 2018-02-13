@@ -5,40 +5,24 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.elyeproj.rxstate.R
-import com.elyeproj.rxstate.model.DataModel
 import com.elyeproj.rxstate.model.MainViewModel
-import com.elyeproj.rxstate.model.UiStateModel
 import com.elyeproj.rxstate.presenter.MainPresenter
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 class MainActivity : AppCompatActivity(), MainView {
 
-    private val compositeDisposable = CompositeDisposable()
-
-    private val mainPresenter by lazy {
-        MainPresenter(this)
-    }
-
-    private lateinit var model: MainViewModel
+    private val mainPresenter by lazy { MainPresenter(this) }
+    private val model by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        model = ViewModelProviders.of(this).get(MainViewModel::class.java)
-
-        model.fetcher
-            .doOnNext({ Log.d("MainActivity", "onNext trigered in the model")})
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({
-                    uiState -> mainPresenter.loadView(uiState)
-            }).addTo(compositeDisposable)
-
+        launch(UI) {
+            mainPresenter.subscribe(model)
+        }
 
         btn_load_success.setOnClickListener {
             mainPresenter.loadSuccess(model)
@@ -55,6 +39,8 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("View", "onDestroy()")
+        mainPresenter.subscription.close()
     }
 
     override fun isEmpty() {
@@ -65,15 +51,11 @@ class MainActivity : AppCompatActivity(), MainView {
         status_view.isLoading()
     }
 
-    override fun isSuccess(data: DataModel) {
-        data.dataString?.let { status_view.isSuccess(it) }
+    override fun isSuccess(data: String) {
+        status_view.isSuccess(data)
     }
 
     override fun isError(errorMessage: String) {
         status_view.isError(errorMessage)
     }
-}
-
-fun Disposable.addTo(compositeDisposable: CompositeDisposable) {
-    compositeDisposable.add(this)
 }

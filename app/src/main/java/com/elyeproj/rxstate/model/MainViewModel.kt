@@ -3,56 +3,61 @@ package com.elyeproj.rxstate.model
 import android.arch.lifecycle.ViewModel
 import android.util.Log
 import com.elyeproj.rxstate.presenter.DataSource
-import io.reactivex.Observable
-import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.experimental.launch
 
 
 class MainViewModel : ViewModel() {
 
-    private var disposableContainer: CompositeDisposable = CompositeDisposable()
+    val TAG = this.javaClass.simpleName
 
-    private val dataSource = DataSource()
+    val stateChangeChannel = ConflatedBroadcastChannel<UiStateModel>()
 
-    val fetcher: Observable<UiStateModel> = dataSource.relay.replay(1).autoConnect()
-        .subscribeOn(Schedulers.computation())
-        .map { f -> loadData(f) }
-        .map { result -> UiStateModel.from(result) }
-        .startWith(UiStateModel.Loading())
-        .onErrorReturn { exception -> UiStateModel.Error(exception) }
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnNext { Log.d("MainModel", "Fetcher had onNext called: "  + it.toString()) }
+    init {
+        async { fetchData() }
+    }
 
     override fun onCleared() {
         super.onCleared()
-        disposableContainer.dispose()
+        Log.d(TAG, "onCleared() called")
+        stateChangeChannel.close()
+    }
+
+    suspend fun fetchData() {
+        Log.d("MainModel", "Fetching data")
+        Log.d("MainModel", "Sending laoding UiState...")
+        stateChangeChannel.send(UiStateModel.Loading())
+        try {
+            Log.d("MainModel", "Retrieving Uistate from Datasource...")
+            val state = DataSource.loadData().await()
+            Log.d("MainModel", "State is: $state")
+            Log.d("MainModel", "Sending Uistate to channel...")
+            stateChangeChannel.send(UiStateModel.from(state))
+            Log.d("MainModel", "Uistate in channel is " + stateChangeChannel.value)
+
+        } catch (e: Exception) {
+            Log.e("MainModel", "Exception happened when sending new state to channel: ${e.cause}")
+        }
     }
 
     fun loadSuccess() {
-        Log.d("MainModel", "Load Success value.")
-        dataSource.relay.accept(DataSource.FetchStyle.FETCH_SUCCESS)
+        Log.d("MainModel", "Please set the datasource value to Success.")
+        DataSource.style = DataSource.FetchStyle.FETCH_SUCCESS
+        launch(UI) { fetchData() }
     }
 
     fun loadEmpty() {
-        Log.d("MainModel", "Load Empty value")
-        dataSource.relay.accept(DataSource.FetchStyle.FETCH_EMPTY)
+        Log.d("MainModel", "Please set the datasource value to Empty")
+        DataSource.style = DataSource.FetchStyle.FETCH_EMPTY
+        launch(UI) { fetchData() }
+
     }
 
     fun loadError() {
-        Log.d("MainModel", "Load Error value")
-        dataSource.relay.accept(DataSource.FetchStyle.FETCH_ERROR)
-
-    }
-
-    private fun loadData(f: DataSource.FetchStyle): DataModel {
-        Thread.sleep(5000)
-
-        return when (f) {
-            DataSource.FetchStyle.FETCH_SUCCESS -> DataModel("Data Loaded")
-            DataSource.FetchStyle.FETCH_EMPTY -> DataModel(null)
-            DataSource.FetchStyle.FETCH_ERROR -> throw IllegalStateException("Error Fetching")
-        }
+        Log.d("MainModel", "Please set the datasource value to Error")
+        DataSource.style = DataSource.FetchStyle.FETCH_ERROR
+        launch(UI) { fetchData() }
     }
 }
