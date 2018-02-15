@@ -16,7 +16,7 @@ object DataSource {
 
     var style = FetchStyle.FETCH_ERROR
 
-    fun loadData(): Deferred<DataModel<String?>> = async {
+    fun loadData() = async {
         delay(5000)
 
         when (style) {

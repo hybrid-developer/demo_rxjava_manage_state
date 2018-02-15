@@ -1,5 +1,6 @@
 package com.elyeproj.rxstate.view
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -20,9 +21,7 @@ class MainActivity : AppCompatActivity(), MainView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        launch(UI) {
-            mainPresenter.subscribe(model)
-        }
+        model.getViewState().observe(this, Observer { value -> mainPresenter.subscribe(value!!) } )
 
         btn_load_success.setOnClickListener {
             mainPresenter.loadSuccess(model)
@@ -40,32 +39,31 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onDestroy() {
         super.onDestroy()
         Log.d("View", "onDestroy()")
-        mainPresenter.unSubscribe()
     }
 
     override fun isEmpty() {
         status_view.isEmpty()
-        enableButtons()
+        enableButtons(true)
     }
 
     override fun isLoading() {
         status_view.isLoading()
-        enableButtons()
+        enableButtons(false)
     }
 
     override fun isSuccess(data: String) {
         status_view.isSuccess(data)
-        enableButtons()
+        enableButtons(true)
     }
 
     override fun isError(errorMessage: String) {
         status_view.isError(errorMessage)
-        enableButtons()
+        enableButtons(true)
     }
 
-    private fun enableButtons() {
-        btn_load_error.isEnabled = !btn_load_error.isEnabled
-        btn_load_success.isEnabled = !btn_load_success.isEnabled
-        btn_load_empty.isEnabled = !btn_load_empty.isEnabled
+    private fun enableButtons(enable: Boolean) {
+        btn_load_error.isEnabled = enable
+        btn_load_success.isEnabled = enable
+        btn_load_empty.isEnabled = enable
     }
 }

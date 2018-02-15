@@ -1,17 +1,12 @@
 package com.elyeproj.rxstate.presenter
 
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import com.elyeproj.rxstate.model.MainViewModel
 import com.elyeproj.rxstate.model.UiStateModel
 import com.elyeproj.rxstate.model.UiStateModel.*
 import com.elyeproj.rxstate.view.MainView
-import kotlinx.coroutines.experimental.channels.SubscriptionReceiveChannel
-import kotlinx.coroutines.experimental.channels.consumeEach
 
 
 class MainPresenter(val view: MainView) {
-
-    private lateinit var subscription: SubscriptionReceiveChannel<UiStateModel>
 
     fun loadSuccess(model: MainViewModel) {
         model.loadStyle(DataSource.FetchStyle.FETCH_SUCCESS)
@@ -25,9 +20,8 @@ class MainPresenter(val view: MainView) {
         model.loadStyle(DataSource.FetchStyle.FETCH_EMPTY)
     }
 
-    suspend fun subscribe(model: MainViewModel) {
-        subscription = model.connect()
-        subscription.subscribe { loadView(it) }
+    fun subscribe(state: UiStateModel) {
+        loadView(state)
     }
 
     private fun loadView(uiState: UiStateModel) {
@@ -40,10 +34,6 @@ class MainPresenter(val view: MainView) {
             }
         }
     }
-
-    fun unSubscribe() {
-        subscription.close()
-    }
 }
 
-inline suspend fun <E> SubscriptionReceiveChannel<E>.subscribe(action: (E) -> Unit) = consumeEach { action(it) }
+//inline suspend fun <E> SubscriptionReceiveChannel<E>.subscribe(action: (E) -> Unit) = consumeEach { action(it) }
