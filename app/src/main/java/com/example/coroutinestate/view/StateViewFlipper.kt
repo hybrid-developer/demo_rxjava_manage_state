@@ -1,4 +1,4 @@
-package com.elyeproj.rxstate.view
+package com.example.coroutinestate.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import android.widget.ViewFlipper
-import com.elyeproj.rxstate.R
+import com.example.coroutinestate.R
 
 class StateViewFlipper(context: Context, attrs: AttributeSet?
 ) : ViewFlipper(context, attrs) {

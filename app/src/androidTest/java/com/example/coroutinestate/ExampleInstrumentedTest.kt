@@ -1,4 +1,4 @@
-package com.elyeproj.rxstate
+package com.example.coroutinestate
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

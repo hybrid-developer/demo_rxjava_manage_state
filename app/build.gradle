@@ -13,7 +13,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion '26.0.3'
     defaultConfig {
-        applicationId "com.elyeproj.rxstate"
+        applicationId "com.example.coroutinestate"
         minSdkVersion 23
         targetSdkVersion 26
         versionCode 1
@@ -45,11 +45,12 @@ dependencies {
     implementation "ru.gildor.coroutines:kotlin-coroutines-retrofit:0.9.0"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:1.2.21"
 
-    // Dependencies for Android Architecture Components: Lifecycle, LiveData, and ViewModel
+    // Dependencies for Android Architecture Components: LiveData, and ViewModel
     implementation "android.arch.lifecycle:extensions:1.1.0"
     kapt "android.arch.lifecycle:compiler:1.1.0"
 
     testImplementation 'junit:junit:4.12'
-    testCompile 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-alpha03'
+    testImplementation 'com.nhaarman.mockitokotlin2:mockito-kotlin:2.0.0-alpha03'
     testImplementation 'org.mockito:mockito-core:2.13.0'
+    testImplementation "android.arch.core:core-testing:1.1.0"
 }

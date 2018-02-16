@@ -1,9 +1,9 @@
-package com.elyeproj.rxstate.presenter
+package com.example.coroutinestate.presenter
 
-import com.elyeproj.rxstate.model.MainViewModel
-import com.elyeproj.rxstate.model.UiStateModel
-import com.elyeproj.rxstate.model.UiStateModel.*
-import com.elyeproj.rxstate.view.MainView
+import com.example.coroutinestate.model.MainViewModel
+import com.example.coroutinestate.model.UiStateModel
+import com.example.coroutinestate.model.UiStateModel.*
+import com.example.coroutinestate.view.MainView
 
 
 class MainPresenter(val view: MainView) {
@@ -20,11 +20,7 @@ class MainPresenter(val view: MainView) {
         model.loadStyle(DataSource.FetchStyle.FETCH_EMPTY)
     }
 
-    fun subscribe(state: UiStateModel) {
-        loadView(state)
-    }
-
-    private fun loadView(uiState: UiStateModel) {
+    fun subscribe(uiState: UiStateModel) {
         when(uiState) {
             is Loading -> view.isLoading()
             is Error -> view.isError(uiState.exception.localizedMessage)
@@ -34,6 +30,8 @@ class MainPresenter(val view: MainView) {
             }
         }
     }
-}
 
-//inline suspend fun <E> SubscriptionReceiveChannel<E>.subscribe(action: (E) -> Unit) = consumeEach { action(it) }
+    fun getData(model: MainViewModel) {
+        model.fetchData()
+    }
+}

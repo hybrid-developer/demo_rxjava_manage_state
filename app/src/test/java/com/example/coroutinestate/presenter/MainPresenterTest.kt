@@ -1,10 +1,10 @@
 @file:Suppress("IllegalIdentifier")
-package com.elyeproj.rxstate.presenter
+package com.example.coroutinestate.presenter
 
 
-import com.elyeproj.rxstate.model.DataModel
-import com.elyeproj.rxstate.model.UiStateModel
-import com.elyeproj.rxstate.view.MainView
+import com.example.coroutinestate.model.DataModel
+import com.example.coroutinestate.model.UiStateModel
+import com.example.coroutinestate.view.MainView
 import com.nhaarman.mockitokotlin2.mock
 import org.junit.Test
 import org.mockito.Mockito.*

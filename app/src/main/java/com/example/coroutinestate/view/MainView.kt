@@ -1,6 +1,4 @@
-package com.elyeproj.rxstate.view
-
-import com.elyeproj.rxstate.model.DataModel
+package com.example.coroutinestate.view
 
 interface MainView {
     fun isEmpty()

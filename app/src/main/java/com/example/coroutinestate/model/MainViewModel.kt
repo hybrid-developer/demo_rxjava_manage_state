@@ -1,9 +1,9 @@
-package com.elyeproj.rxstate.model
+package com.example.coroutinestate.model
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import android.util.Log
-import com.elyeproj.rxstate.presenter.DataSource
+import com.example.coroutinestate.presenter.DataSource
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.experimental.channels.SubscriptionReceiveChannel
@@ -20,11 +20,6 @@ class MainViewModel : ViewModel() {
 
     private val viewState = UiStateLiveData()
 
-    init {
-        /** When the model is initialized we immediately start fetching data */
-        fetchData()
-    }
-
     override fun onCleared() {
         super.onCleared()
         Log.d(TAG, "onCleared() called")
@@ -33,8 +28,9 @@ class MainViewModel : ViewModel() {
     fun fetchData() {
         viewState.setUiState(UiStateModel.Loading())
         try {
-            launch { DataSource.loadData().await() }
-            viewState.setUiState(UiStateModel.from(DataSource.loadData()))
+            launch {
+                viewState.setUiState(UiStateModel.from(DataSource.loadData().await()))
+            }
         } catch (e: Exception) {
             Log.e("MainModel", "Exception happened when sending new state to channel: ${e.cause}")
         }
@@ -51,12 +47,16 @@ class MainViewModel : ViewModel() {
 }
 
 /**
- * [LiveData] object for observing changes in viewstate. Uses kotlin coroutine [channel]s for
- *
+ * [LiveData] object for observing changes in viewstate. Uses kotlin coroutine [channel]s internally
+ * for communication.
  */
 class UiStateLiveData : LiveData<UiStateModel>() {
 
-    private val channel = ConflatedBroadcastChannel<UiStateModel>(UiStateModel.Error(IllegalArgumentException("Invalid Response")))
+    private val channel = ConflatedBroadcastChannel<UiStateModel>(
+        UiStateModel.Error(
+            IllegalArgumentException("Invalid Response")
+        )
+    )
     private lateinit var subscription: SubscriptionReceiveChannel<UiStateModel>
 
     override fun onInactive() {

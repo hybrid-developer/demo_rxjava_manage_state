@@ -1,16 +1,15 @@
-package com.elyeproj.rxstate.view
+package com.example.coroutinestate.view
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import com.elyeproj.rxstate.R
-import com.elyeproj.rxstate.model.MainViewModel
-import com.elyeproj.rxstate.presenter.MainPresenter
+import com.example.coroutinestate.R
+import com.example.coroutinestate.model.MainViewModel
+import com.example.coroutinestate.presenter.MainPresenter
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
 
 class MainActivity : AppCompatActivity(), MainView {
 
@@ -21,7 +20,9 @@ class MainActivity : AppCompatActivity(), MainView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        model.getViewState().observe(this, Observer { value -> mainPresenter.subscribe(value!!) } )
+        model.getViewState().observe { value -> mainPresenter.subscribe(value!!) }
+
+        if (savedInstanceState == null) mainPresenter.getData(model)
 
         btn_load_success.setOnClickListener {
             mainPresenter.loadSuccess(model)
@@ -34,11 +35,6 @@ class MainActivity : AppCompatActivity(), MainView {
         btn_load_empty.setOnClickListener {
             mainPresenter.loadEmpty(model)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("View", "onDestroy()")
     }
 
     override fun isEmpty() {
@@ -66,4 +62,7 @@ class MainActivity : AppCompatActivity(), MainView {
         btn_load_success.isEnabled = enable
         btn_load_empty.isEnabled = enable
     }
+
+    private fun <T> LiveData<T>.observe(observe: (T?) -> Unit)
+            = observe(this@MainActivity, Observer { observe(it) })
 }

@@ -1,7 +1,6 @@
-package com.elyeproj.rxstate.presenter
+package com.example.coroutinestate.presenter
 
-import com.elyeproj.rxstate.model.DataModel
-import kotlinx.coroutines.experimental.Deferred
+import com.example.coroutinestate.model.DataModel
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 

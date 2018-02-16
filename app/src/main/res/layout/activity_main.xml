@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     android:background="#FFF"
     android:orientation="vertical"
-    tools:context="com.elyeproj.rxstate.view.MainActivity">
+    tools:context="com.elyeproj.rxstate.com.example.rxstate.view.MainActivity">
 
-    <com.elyeproj.rxstate.view.StateViewFlipper
+    <com.example.coroutinestate.view.StateViewFlipper
         android:id="@+id/status_view"
         android:layout_width="match_parent"
         android:layout_height="132dp"

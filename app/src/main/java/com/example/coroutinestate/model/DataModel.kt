@@ -1,4 +1,4 @@
-package com.elyeproj.rxstate.model
+package com.example.coroutinestate.model
 
 
 sealed class DataModel<out T : Any?> {

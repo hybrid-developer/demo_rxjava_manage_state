@@ -1,4 +1,4 @@
-package com.elyeproj.rxstate.model
+package com.example.coroutinestate.model
 
 sealed class UiStateModel {
 
@@ -6,8 +6,12 @@ sealed class UiStateModel {
         fun <T> from(result: T) : UiStateModel {
             when (result) {
                 is Loading -> return Loading()
-                is DataModel.Ok<*> -> return Success(result.value)
-                is DataModel.Exception -> return Error(result.exception)
+                is DataModel.Ok<*> -> return Success(
+                    result.value
+                )
+                is DataModel.Exception -> return Error(
+                    result.exception
+                )
             }
             return Error(IllegalArgumentException("Invalid Response"))
         }
