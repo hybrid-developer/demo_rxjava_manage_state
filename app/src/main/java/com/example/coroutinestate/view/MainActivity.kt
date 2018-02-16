@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.example.coroutinestate.R
 import com.example.coroutinestate.model.MainViewModel
 import com.example.coroutinestate.presenter.MainPresenter
@@ -20,9 +19,9 @@ class MainActivity : AppCompatActivity(), MainView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        model.getViewState().observe { value -> mainPresenter.subscribe(value!!) }
+        model.getViewState().observe { it?.let(mainPresenter::subscribe) }
 
-        if (savedInstanceState == null) mainPresenter.getData(model)
+        if (savedInstanceState == null) mainPresenter.loadView(model)
 
         btn_load_success.setOnClickListener {
             mainPresenter.loadSuccess(model)
@@ -43,7 +42,7 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     override fun isLoading() {
-        status_view.isLoading()
+        status_view.isLoading("I'm loading...")
         enableButtons(false)
     }
 

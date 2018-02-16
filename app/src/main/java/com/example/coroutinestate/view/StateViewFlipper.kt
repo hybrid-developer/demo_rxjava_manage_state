@@ -63,7 +63,8 @@ class StateViewFlipper(context: Context, attrs: AttributeSet?
         showView(emptyStateView)
     }
 
-    fun isLoading() {
+    fun isLoading(message: String) {
+        loadingStateView.findViewById<TextView>(R.id.txt_loading_message).text = message
         showView(loadingStateView)
     }
 }

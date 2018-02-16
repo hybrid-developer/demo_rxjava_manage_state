@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#FFF"
     android:orientation="vertical"
-    tools:context="com.elyeproj.rxstate.com.example.rxstate.view.MainActivity">
+    tools:context="com.example.coroutinestate.view.MainActivity">
 
     <com.example.coroutinestate.view.StateViewFlipper
         android:id="@+id/status_view"
