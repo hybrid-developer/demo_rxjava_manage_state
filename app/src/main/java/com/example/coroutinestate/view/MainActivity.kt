@@ -1,14 +1,17 @@
 package com.example.coroutinestate.view
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.example.coroutinestate.R
 import com.example.coroutinestate.model.MainViewModel
 import com.example.coroutinestate.presenter.MainPresenter
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main.btn_load_empty
+import kotlinx.android.synthetic.main.activity_main.btn_load_error
+import kotlinx.android.synthetic.main.activity_main.btn_load_success
+import kotlinx.android.synthetic.main.activity_main.status_view
 
 class MainActivity : AppCompatActivity(), MainView {
 

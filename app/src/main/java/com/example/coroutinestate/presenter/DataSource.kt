@@ -1,8 +1,8 @@
 package com.example.coroutinestate.presenter
 
 import com.example.coroutinestate.model.DataModel
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 
 
 object DataSource {
@@ -15,7 +15,7 @@ object DataSource {
 
     var style = FetchStyle.FETCH_ERROR
 
-    fun loadData() = async {
+    suspend fun loadData() = coroutineScope {
         delay(5000)
 
         when (style) {

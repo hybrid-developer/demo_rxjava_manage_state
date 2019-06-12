@@ -1,12 +1,12 @@
 package com.example.coroutinestate.model
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.coroutinestate.presenter.DataSource
-import kotlinx.coroutines.experimental.launch
-
+import kotlinx.coroutines.launch
 
 /**
  * Viewmodel that holds the view state
@@ -23,10 +23,10 @@ class MainViewModel : ViewModel() {
     }
 
     fun fetchData() {
-        publish(UiStateModel.Loading())
+        publish(Loading())
         try {
-            launch {
-                publish(UiStateModel.from(DataSource.loadData().await()))
+            viewModelScope.launch {
+                publish(UiStateModel.from(DataSource.loadData()))
             }
         } catch (e: Exception) {
             Log.e("MainModel", "Exception happened when sending new state to channel: ${e.cause}")
